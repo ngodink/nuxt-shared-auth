@@ -1,11 +1,18 @@
-
 export default {
-  mode: 'universal',
+  srcDir: __dirname,
+  buildDir: '.nuxt/account',
+  mode: 'spa',
+  server: {
+    port: 3000, // default: 3000,
+    host: 'account.test' // default: localhost
+  },
   /*
   ** Headers of the page
   */
   head: {
-    title: process.env.npm_package_name || '',
+    titleTemplate: (subtitle) => {
+      return subtitle ? `${subtitle} - Account` : 'Account'
+    },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -38,16 +45,36 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
-    // Doc: https://bootstrap-vue.js.org
     'bootstrap-vue/nuxt',
-    // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
+    '@nuxtjs/auth'
   ],
+  /*
+   ** Router configuration
+   */
+  router: {
+    middleware: ['auth']
+  },
   /*
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
+    baseURL: 'https://reqres.in/'
+  },
+  /*
+   ** Auth module configuration
+   */
+  auth: {
+    strategies: {
+      local: {
+        endpoints: {
+          login: { url: '/api/login', method: 'post', propertyName: 'token' },
+          logout: false,
+          user: { url: '/api/users/2', method: 'get', propertyName: 'data' }
+        }
+      }
+    }
   },
   /*
   ** Build configuration
